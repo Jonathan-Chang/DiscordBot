@@ -1,6 +1,6 @@
 # DiscordBot
 
-This bot primarily information from HLTV.org such as the important matches and player statistics.
+This bot primarily obtains information from HLTV.org such as the important matches and the player statistics from those matches.
 
 It then displays it to the user if asked for specifically.
 
