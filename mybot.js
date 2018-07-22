@@ -244,6 +244,105 @@ client.on("message", (message) => {
       });
 
     }
+  if(command === "stats"){
+      let [username] = args;    
+      
+      let steamid = steam.convertVanity(username, function(err, res) {
+        
+          if(err){
+            message.channel.send("Invalid username");
+          }
+          else{
+            const csgostats = {
+              uri: 'https://csgostats.gg/player/' + res,
+              transform: function(body){
+                return cheerio.load(body);
+              }
+            };
+            
+            
+
+            rp(csgostats)
+            .then(($) => {
+              let personal = new Discord.RichEmbed();
+
+              $('#kpd').each(function(i, elem){
+                console.log(($(this).text().replace(/\s/g, '')));
+                personal.addField("K/D Ratio", ($(this).text().replace(/\s/g, '')), true);
+              });
+              $('#rating').each(function(i, elem){
+                console.log(($(this).text().replace(/\s/g, '')));
+                personal.addField("Rating", ($(this).text().replace(/\s/g, '')), true);
+              });
+              $('#competitve-wins').each(function(i, elem){
+                console.log(($(this).text().replace(/[^\d]/g, '')));
+                personal.addField("Competitive Wins" ,($(this).text().replace(/[^\d]/g, '')), true);
+                
+              });
+              //Clutch Success
+              $('.stat-panel').each(function(i, elem){
+                //console.log(($(this).text().replace(/\s/g, '')));
+                
+                if(($(this).text().replace(/\s/g, '')).startsWith("ClutchSuccess")){
+                  let beginning = $(this).text().replace(/\s/g, '').indexOf('X');
+                  let end = $(this).text().replace(/\s/g, '').indexOf('%');
+                  console.log($(this).text().replace(/\s/g, '').slice(beginning+1, end));
+                  personal.addField("Clutch Success", ($(this).text().replace(/\s/g, '').slice(beginning+1, end)) + '%', true);
+                }
+                
+
+              });
+
+              //ADR
+              $('.stat-panel').each(function(i, elem){
+                if(($(this).text().replace(/\s/g, '')).startsWith("ADR")){
+                  let beginning = $(this).text().replace(/\s/g, '').indexOf('R');
+                  let end = $(this).text().replace(/\s/g, '').indexOf('a');
+                  console.log($(this).text().replace(/\s/g, '').slice(beginning+1, end-1));
+                  personal.addField("ADR", ($(this).text().replace(/\s/g, '').slice(beginning+1, end-1)), true);
+                }    
+              });
+            
+              //Win Rate
+              $('.stat-panel').each(function(i, elem){
+                if(($(this).text().replace(/\s/g, '')).startsWith("WinRate")){
+                  let beginning = $(this).text().replace(/\s/g, '').indexOf('e');
+                  let end = $(this).text().replace(/\s/g, '').indexOf('%');
+                  console.log($(this).text().replace(/\s/g, '').slice(beginning+1, end));
+                  personal.addField("Win Rate", ($(this).text().replace(/\s/g, '').slice(beginning+1, end)) + '%', true);
+            
+                }    
+              });
+
+
+               //Most played maps
+               $('.stat-panel').each(function(i, elem){
+                if(($(this).text().replace(/\s/g, '')).startsWith("MostPlayed")){
+                 
+                  let maps = $(this).text().replace(/\s/g, '').replace(/[0-9]/g, "").split("de_");
+                  maps.shift();
+                  //personal.addField("Most Played", ($(this).text().replace(/\s/g, '').slice(beginning+1, end)), true);
+                    personal.addBlankField();
+                    personal.addField("Most Played Maps", maps, true);
+                    
+                }
+                 
+              });
+
+              message.channel.send(personal);
+
+
+            });
+
+              
+          }
+          
+
+        });
+      
+
+
+    }
       //Example, temporary command
       if (command === "asl") {
         let [age, sex, location] = args;
