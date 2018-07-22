@@ -128,7 +128,7 @@ client.on("message", (message) => {
         const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 50000 });
         collector.on('collect', message => { 
           
-          if (Number(message.content) <= totalMatches && Number(message.content) > 0) {
+          if (Number(message.content) <= totalMatches && Number(message.content) > 0 || || message.content.startsWith(auth.prefix)) {
                        // PLAYER INFORMATION START //
             const options = {
               uri: links[Number(message.content)-1],
