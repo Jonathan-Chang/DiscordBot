@@ -6,6 +6,9 @@ const client = new Discord.Client();
 const auth = require("./auth.json");
 const rp = require('request-promise');
 const cheerio = require('cheerio');
+const steam = require('steamidconvert')(auth.steamAPIKey);
+
+
 
 //Arrays to store values for https://www.hltv.org/results
 let winners = [];
